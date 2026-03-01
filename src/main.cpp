@@ -18,6 +18,7 @@
 #include <WebServer.h>
 #include <DNSServer.h>
 #include <TFT_eSPI.h>
+#include <Preferences.h>
 #include "driver/gpio.h"
 
 const char* AP_SSID   = "COSMIC-S3 FREE ART PORTAL \xF0\x9F\x8E\xA8";
@@ -44,8 +45,16 @@ static const int MSG_COUNT = 5;
 static String    pendingMsg = "";
 static uint8_t   msgId      = 0;
 
+// ── Visitor counter (NVS persistent) ─────────────────────────────────────────
+static Preferences prefs;
+static uint32_t    totalVisits = 0;
+
+// ── Visitor → device messages (no persistence) ───────────────────────────────
+static String        visitorMsg   = "";
+static unsigned long visitorMsgAt = 0;
+
 // ── Display state machine ─────────────────────────────────────────────────────
-enum DispState { DISP_IDLE, DISP_MENU, DISP_CONFIRM };
+enum DispState { DISP_IDLE, DISP_MENU, DISP_CONFIRM, DISP_VISITOR_MSG };
 static DispState     dispState       = DISP_IDLE;
 static int           menuSel         = 0;
 static bool          btnLlast        = false;
@@ -514,6 +523,16 @@ footer{margin-top:16px;font-size:.4rem;letter-spacing:4px;color:rgba(255,255,255
 </div>
 
 <footer>esp32-s3 t-qt pro &middot; wifi ap &middot; 192.168.4.1 &middot; 60+ modes</footer>
+<div style="width:min(460px,92vw);margin:14px auto 0;background:rgba(10,0,40,.7);border:1px solid rgba(131,56,236,.4);border-radius:12px;padding:14px 16px">
+<p style="font-size:.5rem;letter-spacing:4px;color:rgba(131,56,236,.8);margin-bottom:8px;text-align:center">&#x2709; SEND A MESSAGE TO THE GALLERY</p>
+<div style="display:flex;gap:8px">
+<input id="vmsg" maxlength="50" placeholder="Say hi to the operator..."
+  style="flex:1;background:rgba(0,0,0,.5);border:1px solid rgba(131,56,236,.5);border-radius:8px;color:#fff;padding:8px 10px;font-family:monospace;font-size:.65rem;letter-spacing:1px;outline:none">
+<button onclick="sendVMsg()"
+  style="background:rgba(131,56,236,.3);border:1px solid rgba(131,56,236,.6);color:#c77dff;border-radius:8px;padding:8px 14px;font-family:monospace;font-size:.6rem;letter-spacing:2px;cursor:pointer">SEND</button>
+</div>
+<p id="vmsg-status" style="font-size:.42rem;letter-spacing:2px;color:rgba(6,255,208,0);text-align:center;margin-top:6px;transition:color .3s">&#x2713; MESSAGE SENT</p>
+</div>
 <script>var _mi=0;
 setInterval(function(){
   fetch('/api/msg').then(function(r){return r.json();}).then(function(d){
@@ -530,6 +549,18 @@ function showMsg(m){
   t.textContent=m;
   document.body.appendChild(t);
   setTimeout(function(){t.remove();},5000);
+}
+function sendVMsg(){
+  var inp=document.getElementById('vmsg');
+  var m=inp.value.trim();
+  if(!m)return;
+  fetch('/api/visitor-msg',{method:'POST',headers:{'Content-Type':'text/plain'},body:m})
+    .then(function(){
+      inp.value='';
+      var s=document.getElementById('vmsg-status');
+      s.style.color='rgba(6,255,208,.9)';
+      setTimeout(function(){s.style.color='rgba(6,255,208,0)';},3000);
+    }).catch(function(){});
 }
 </script>
 </body></html>
@@ -4679,8 +4710,12 @@ static void drawIdleScreen() {
     tft.fillCircle(64, 64, 44, mid);
     tft.setTextDatum(MC_DATUM);
     tft.setTextColor(TFT_WHITE, mid);
-    tft.drawString("COSMIC PORTAL", 64, 57, 1);
-    tft.drawString("WAITING...", 64, 69, 1);
+    tft.drawString("COSMIC PORTAL", 64, 52, 1);
+    tft.drawString("WAITING...", 64, 64, 1);
+    // Persistent visit counter at bottom
+    char buf[20]; snprintf(buf, sizeof(buf), "VISITS: %lu", (unsigned long)totalVisits);
+    tft.setTextColor(TFT_WHITE, bg);
+    tft.drawString(buf, 64, 82, 1);
 }
 
 static void drawConnectedScreen(int clients) {
@@ -4699,6 +4734,9 @@ static void drawConnectedScreen(int clients) {
     tft.drawString("CONNECTED", 64, 80, 2);
     tft.setTextColor(tft.color565(40, 40, 40), bg);
     tft.drawString("PRESS BTN FOR MSG", 64, 100, 1);
+    // Visit count
+    char vbuf[20]; snprintf(vbuf, sizeof(vbuf), "VISITS: %lu", (unsigned long)totalVisits);
+    tft.drawString(vbuf, 64, 112, 1);
 }
 
 static void drawMenuScreen() {
@@ -4740,6 +4778,30 @@ static void drawConfirmScreen() {
     tft.drawString("visitors", 64, 111, 1);
 }
 
+static void drawVisitorMsgScreen() {
+    tft.fillScreen(TFT_BLACK);
+    // Header
+    tft.fillRect(0, 0, 128, 18, tft.color565(0, 40, 60));
+    tft.setTextDatum(MC_DATUM);
+    tft.setTextColor(tft.color565(6, 255, 208), tft.color565(0, 40, 60));
+    tft.drawString("* VISITOR MSG *", 64, 9, 2);
+    // Message body — manual word-wrap at ~18 chars per line for font size 1
+    tft.setTextColor(TFT_WHITE, TFT_BLACK);
+    tft.setTextSize(1);
+    tft.setTextWrap(true);
+    tft.setCursor(4, 24);
+    tft.print(visitorMsg.c_str());
+    tft.setTextWrap(false);
+    // Footer countdown hint
+    unsigned long elapsed = millis() - visitorMsgAt;
+    int remaining = max(0, (int)(8 - (int)(elapsed / 1000)));
+    char buf[16]; snprintf(buf, sizeof(buf), "CLOSES IN %ds", remaining);
+    tft.fillRect(0, 118, 128, 10, tft.color565(0, 20, 30));
+    tft.setTextDatum(MC_DATUM);
+    tft.setTextColor(tft.color565(0, 150, 120), tft.color565(0, 20, 30));
+    tft.drawString(buf, 64, 123, 1);
+}
+
 // ── Button handling ───────────────────────────────────────────────────────────
 
 static void handleButtons() {
@@ -4779,6 +4841,9 @@ static void updateDisplay() {
     if (dispState == DISP_CONFIRM && now - confirmAt > 1500) {
         dispState = DISP_IDLE;
     }
+    if (dispState == DISP_VISITOR_MSG && now - visitorMsgAt > 8000) {
+        dispState = DISP_IDLE;
+    }
 
     if (now - lastDispUpdate < 50) return;  // cap at 20 fps
     lastDispUpdate = now;
@@ -4786,8 +4851,9 @@ static void updateDisplay() {
     int clients = WiFi.softAPgetStationNum();
 
     switch (dispState) {
-        case DISP_MENU:    drawMenuScreen();    break;
-        case DISP_CONFIRM: drawConfirmScreen(); break;
+        case DISP_MENU:        drawMenuScreen();        break;
+        case DISP_CONFIRM:     drawConfirmScreen();     break;
+        case DISP_VISITOR_MSG: drawVisitorMsgScreen();  break;
         default:
             breatheVal += breatheDir * 2;
             if (breatheVal >= 240) { breatheVal = 240; breatheDir = -1; }
@@ -4804,6 +4870,26 @@ static void updateDisplay() {
 void handleApiMsg() {
     String json = "{\"id\":" + String(msgId) + ",\"msg\":\"" + pendingMsg + "\"}";
     server.send(200, "application/json", json);
+}
+
+// ── /api/visitor-msg endpoint ─────────────────────────────────────────────────
+
+void handleApiVisitorMsg() {
+    if (server.method() != HTTP_POST) {
+        server.send(405, "text/plain", "Method Not Allowed");
+        return;
+    }
+    String body = server.arg("plain");
+    body.trim();
+    if (body.length() == 0) {
+        server.send(400, "text/plain", "Empty message");
+        return;
+    }
+    if (body.length() > 50) body = body.substring(0, 50);
+    visitorMsg   = body;
+    visitorMsgAt = millis();
+    dispState    = DISP_VISITOR_MSG;
+    server.send(200, "text/plain", "OK");
 }
 
 // ── Setup ─────────────────────────────────────────────────────────────────────
@@ -4828,6 +4914,14 @@ void setup() {
     WiFi.mode(WIFI_AP);
     WiFi.softAP(AP_SSID);
     delay(200);
+
+    // Load persisted visitor count and start counting new connections
+    prefs.begin("cosmic", false);
+    totalVisits = prefs.getUInt("visits", 0);
+    WiFi.onEvent([](WiFiEvent_t event, WiFiEventInfo_t info) {
+        totalVisits++;
+        prefs.putUInt("visits", totalVisits);
+    }, ARDUINO_EVENT_WIFI_AP_STACONNECTED);
 
     IPAddress apIP = WiFi.softAPIP();
     dnsServer.start(DNS_PORT, "*", apIP);
@@ -4905,7 +4999,8 @@ void setup() {
     server.on("/warpgrid", HTTP_GET, handleWarpgrid);
     server.on("/nebula", HTTP_GET, handleNebula);
 
-    server.on("/api/msg", HTTP_GET, handleApiMsg);
+    server.on("/api/msg",         HTTP_GET,  handleApiMsg);
+    server.on("/api/visitor-msg", HTTP_POST, handleApiVisitorMsg);
     server.on("/favicon.ico", HTTP_GET, []() { server.send(404, "text/plain", ""); });
     server.onNotFound(handleRedirect);
     server.begin();
