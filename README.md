@@ -48,7 +48,7 @@ The T-QT Pro has an IPEX antenna connector — adding an external antenna notice
 
 ## Display States
 
-The tiny circular screen doubles as a live status indicator:
+The tiny screen doubles as a live status indicator:
 
 | State | What you see |
 |---|---|
