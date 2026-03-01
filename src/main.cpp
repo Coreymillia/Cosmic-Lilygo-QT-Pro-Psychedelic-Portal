@@ -120,6 +120,16 @@ footer{margin-top:16px;font-size:.4rem;letter-spacing:4px;color:rgba(255,255,255
 <div class="glw g1"></div><div class="glw g2"></div>
 <h1>COSMIC-S3</h1><p class="sub">SELECT TRANSMISSION MODE</p>
 
+<a href="/safety" style="display:block;width:min(460px,92vw);margin-bottom:14px;padding:11px 16px;border-radius:12px;text-decoration:none;background:rgba(40,0,0,.65);border:1px solid rgba(255,60,60,.55);box-shadow:0 0 18px rgba(255,40,40,.12);transition:box-shadow .15s" onmouseover="this.style.boxShadow='0 0 28px rgba(255,60,60,.4)'" onmouseout="this.style.boxShadow='0 0 18px rgba(255,40,40,.12)'">
+<span style="display:flex;align-items:center;gap:10px">
+<span style="font-size:1.3rem">&#x26A0;&#xFE0F;</span>
+<span>
+<span style="display:block;font-size:.7rem;letter-spacing:3px;font-weight:bold;color:#ff6b6b;margin-bottom:2px">FREE WIFI SAFETY &mdash; READ THIS</span>
+<span style="display:block;font-size:.4rem;letter-spacing:.8px;color:rgba(255,150,150,.5)">WHAT EVIL PORTALS DON&apos;T WANT YOU TO KNOW &middot; TAP TO LEARN</span>
+</span>
+</span>
+</a>
+
 <div class="cat">&#x25C6; MATRIX RAIN</div>
 <div class="grid">
   <a class="card c4" href="/matrix">
@@ -566,6 +576,110 @@ function sendVMsg(){
 </body></html>
 )EOF";
 
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  SAFETY  —  Free WiFi PSA
+// ─────────────────────────────────────────────────────────────────────────────
+static const char SAFETY_HTML[] = R"EOF(
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FREE WIFI SAFETY &middot; COSMIC-S3</title><style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:radial-gradient(ellipse at 50% 50%,#1a0000,#000010 70%);
+min-height:100vh;display:flex;flex-direction:column;align-items:center;
+font-family:'Courier New',monospace;color:#fff;padding:20px 12px 36px}
+.glw{position:fixed;border-radius:50%;filter:blur(90px);z-index:-1;pointer-events:none}
+.g1{width:350px;height:350px;top:-120px;left:-80px;background:rgba(200,20,20,.18)}
+.g2{width:280px;height:280px;bottom:-80px;right:-80px;background:rgba(131,56,236,.15)}
+.nav{width:min(480px,94vw);display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.nav a{color:rgba(255,100,100,.7);text-decoration:none;font-size:.55rem;letter-spacing:3px}
+.nav a:hover{color:#ff6b6b}
+.nav span{color:rgba(255,80,80,.3);font-size:.48rem;letter-spacing:3px}
+h1{font-size:clamp(1rem,5vw,1.5rem);letter-spacing:5px;text-align:center;margin-bottom:4px;color:#ff6b6b;
+filter:drop-shadow(0 0 12px rgba(255,60,60,.6))}
+.sub{font-size:.48rem;letter-spacing:7px;color:rgba(255,100,100,.4);margin-bottom:22px;text-align:center}
+.w{width:min(480px,94vw)}
+.card{background:rgba(15,0,0,.7);border-radius:12px;padding:16px 18px;margin-bottom:12px;border:1px solid}
+.red{border-color:rgba(255,60,60,.45);box-shadow:0 0 14px rgba(255,40,40,.08)}
+.grn{border-color:rgba(0,220,120,.38);box-shadow:0 0 14px rgba(0,200,100,.08)}
+.prp{border-color:rgba(131,56,236,.38);box-shadow:0 0 14px rgba(131,56,236,.08)}
+.amb{border-color:rgba(255,180,0,.38);box-shadow:0 0 14px rgba(255,160,0,.08)}
+.card h2{font-size:.68rem;letter-spacing:4px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.red h2{color:#ff6b6b}.grn h2{color:#06ffd0}.prp h2{color:#c77dff}.amb h2{color:#ffd700}
+.card p,.card li{font-size:.55rem;letter-spacing:.8px;line-height:1.7;color:rgba(255,255,255,.65)}
+.card ul{padding-left:14px;margin-top:6px}
+.card li{margin-bottom:4px}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.42rem;letter-spacing:2px;margin-right:4px;margin-top:4px;font-weight:bold}
+.tred{background:rgba(255,60,60,.2);color:#ff8888;border:1px solid rgba(255,60,60,.4)}
+.tgrn{background:rgba(0,220,120,.15);color:#06ffd0;border:1px solid rgba(0,200,100,.35)}
+.rule{font-size:.62rem;letter-spacing:2px;color:#fff;background:rgba(131,56,236,.2);
+border-radius:8px;padding:10px 14px;margin-bottom:8px;border-left:3px solid rgba(131,56,236,.7);line-height:1.6}
+.rule span{color:#c77dff;font-weight:bold}
+.ok{background:rgba(0,30,20,.8);border:1px solid rgba(0,220,120,.4);border-radius:12px;padding:16px 18px;margin-bottom:12px}
+.ok h2{font-size:.68rem;letter-spacing:4px;color:#06ffd0;margin-bottom:10px}
+.ok p{font-size:.53rem;letter-spacing:.8px;line-height:1.7;color:rgba(255,255,255,.65)}
+.ok .tick{color:#06ffd0;margin-right:6px}
+footer{margin-top:18px;font-size:.4rem;letter-spacing:4px;color:rgba(255,255,255,.07);text-align:center}
+</style></head><body>
+<div class="glw g1"></div><div class="glw g2"></div>
+<div class="w">
+<div class="nav"><a href="/">&#x2B21; BACK TO PORTAL</a><span>SAFETY README</span></div>
+<h1>&#x26A0; FREE WIFI SAFETY</h1>
+<p class="sub">WHAT EVERY PORTAL CLICKER SHOULD KNOW</p>
+
+<div class="card red">
+<h2>&#x1F3AF; WHAT IS A CAPTIVE PORTAL?</h2>
+<p>When you connect to a WiFi network and get redirected to a webpage before you can access the internet &mdash; that is a captive portal. Hotels, airports, coffee shops, and yes, this little cosmic device all use them. Most are harmless. Some are not.</p>
+</div>
+
+<div class="card red">
+<h2>&#x1F480; HOW EVIL PORTALS ATTACK YOU</h2>
+<p>A bad actor sets up a hotspot with a name like <b style="color:#ff8888">"FREE Airport WiFi"</b> or <b style="color:#ff8888">"Starbucks Guest"</b> &mdash; indistinguishable from the real thing. When you connect, the portal asks you to &ldquo;log in&rdquo; to get online. That login form is a trap. Watch out for:</p>
+<ul>
+<li>Portals asking for your <b style="color:#ff8888">email &amp; password</b> &mdash; especially Gmail, Facebook, Apple ID</li>
+<li>Portals that mimic <b style="color:#ff8888">real company login pages</b> (Google, Microsoft, Instagram)</li>
+<li>Portals asking for a <b style="color:#ff8888">credit card</b> to &ldquo;verify your identity&rdquo;</li>
+<li>Portals that install an <b style="color:#ff8888">app or profile</b> &ldquo;required to connect&rdquo;</li>
+<li>Any portal that feels <b style="color:#ff8888">slightly off</b> &mdash; trust that instinct</li>
+</ul>
+<div style="margin-top:10px">
+<span class="tag tred">CREDENTIAL THEFT</span>
+<span class="tag tred">PHISHING</span>
+<span class="tag tred">MAN IN THE MIDDLE</span>
+<span class="tag tred">SESSION HIJACK</span>
+</div>
+</div>
+
+<div class="card amb">
+<h2>&#x1F9E0; THE GOLDEN RULES</h2>
+<div class="rule"><span>RULE 1 &mdash;</span> Never enter your real password on a portal login page. Ever. Legitimate public WiFi does not need your Google or social media password.</div>
+<div class="rule"><span>RULE 2 &mdash;</span> Check the URL bar. Portals are always HTTP, never HTTPS. If a page is asking for sensitive info and it&apos;s not HTTPS &mdash; close it immediately.</div>
+<div class="rule"><span>RULE 3 &mdash;</span> Verify the network name with staff before connecting in public places. Evil portals often have very similar names to the real network.</div>
+<div class="rule"><span>RULE 4 &mdash;</span> Use a VPN on any public WiFi. Even a legitimate network can have bad actors watching traffic.</div>
+<div class="rule"><span>RULE 5 &mdash;</span> If a portal asks you to install anything &mdash; disconnect immediately and report it.</div>
+</div>
+
+<div class="ok">
+<h2>&#x2728; ABOUT THIS PORTAL</h2>
+<p><span class="tick">&#x2713;</span>This is COSMIC-S3 &mdash; a WiFi art gallery running on a tiny ESP32-S3 chip.<br>
+<span class="tick">&#x2713;</span>It does not have internet access. Nothing you do here leaves this device.<br>
+<span class="tick">&#x2713;</span>It collects zero personal data. No emails, no passwords, no accounts.<br>
+<span class="tick">&#x2713;</span>It never asks for credentials of any kind.<br>
+<span class="tick">&#x2713;</span>It is purely a canvas &mdash; 60+ generative art &amp; animation modes for you to explore.<br>
+<span class="tick">&#x2713;</span>You found something weird and wonderful. That&apos;s it. Enjoy it.</p>
+</div>
+
+<div class="card prp">
+<h2>&#x1F4F1; IF YOU&apos;RE EVER UNSURE</h2>
+<p>The safest move is always to disconnect and forget the network. You can reconnect to your mobile data in seconds. No free WiFi is worth your account credentials or personal information. Stay cosmic, stay safe. &#x1F320;</p>
+</div>
+
+</div>
+<footer>cosmic-s3 &middot; esp32-s3 t-qt pro &middot; no internet &middot; no tracking &middot; just art</footer>
+</body></html>
+)EOF";
+
+void handleSafety() { server.send(200, "text/html", SAFETY_HTML); }
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  MANDALA  —  Sacred Geometry (original + nav)
@@ -4927,6 +5041,7 @@ void setup() {
     dnsServer.start(DNS_PORT, "*", apIP);
 
     server.on("/",            HTTP_GET, handleIndex);
+    server.on("/safety",      HTTP_GET, handleSafety);
     server.on("/mandala",     HTTP_GET, handleMandala);
     server.on("/plasma",      HTTP_GET, handlePlasma);
     server.on("/fractal",     HTTP_GET, handleFractal);
